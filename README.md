@@ -9,6 +9,8 @@
     npm start
 
 ## Configuração Inicial
+
+- Em .env a porta pode ser mudada, mas se for fazer alguma alteração, é necessário fazer no back-end e no front-end
 - Iniciar o back-end antes de rodar o front - back-end_rep: https://github.com/LukkzMaverick/gerenciador-de-estabelecimentos-api
 
 ## Considerações do projeto como um todo(front + back)
