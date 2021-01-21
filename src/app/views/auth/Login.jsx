@@ -7,7 +7,7 @@ import { fetchLogar } from '../../store/slicers/async/logar';
 import { useDispatch, useSelector } from 'react-redux';
 import http from '../../config/config';
 import { saveLocalStorage, getToken } from '../../config/auth';
-import LoginContext from '../../context/LoginContext';
+import { loginStore } from '../../store/slicers/user';
 
 const Login = () => {
 
@@ -19,8 +19,6 @@ const Login = () => {
         email: '',
         senha: '',
     })
-
-    const login = useContext(LoginContext)
 
     useEffect(() => {
         document.addEventListener('keypress', enviarFormPeloEnter)
@@ -61,13 +59,17 @@ const Login = () => {
         try {
             const response = await dispatch(fetchLogar(form))
             console.log(response)
-            saveLocalStorage({token: response.payload.token, user: response.payload.user})
-            login.setIsLogged(true)
+            const user = response.payload.user
+            saveLocalStorage({token: response.payload.token, user})
+            dispatch(loginStore(user))
             http.defaults.headers['x-auth-token'] = getToken();
-            history.push('/')
+            if(user.role === 'superAdmin'){
+                history.push('/cadastrarAdmins')
+            }else{
+                history.push('/')
+            }
         } catch (error) {
             console.log(error)
-            
         }
     }
 

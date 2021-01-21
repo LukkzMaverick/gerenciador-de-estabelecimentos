@@ -8,6 +8,8 @@ import Admin from './app/views/admin';
 import { useState } from "react";
 import { isAuthenticated } from './app/config/auth';
 import LoginContext from './app/context/LoginContext';
+import Portal from './app/views/portal/Portal';
+import Login from './app/views/auth/Login';
 function App() {
 
   const [isLogged, setIsLogged] = useState(isAuthenticated())
@@ -20,7 +22,9 @@ function App() {
               <Router history={history}>
               <Switch> 
                 <Route component={Admin} path="/" />
-                {/* <Route component={Portal} path="/portal" /> */}
+                <Route component={Portal} path="/portal" />
+                <Route exact path={'/login'} component={Login} />
+                <Route exact path={'/register'} component={() => <h1>Só um teste</h1>} />
               </Switch>
               </Router>
             </main>
