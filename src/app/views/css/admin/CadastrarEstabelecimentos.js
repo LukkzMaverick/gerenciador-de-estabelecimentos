@@ -19,7 +19,7 @@ padding: 1.5rem;
     width: 100%;
     margin-bottom: 2rem;
 }
-.criarEstabelecimento__errorList, .criarEstabelecimento__sucessAlert, .criarEstabelecimento__form label, .divCamposDinamicos, .criarEstabelecimento__form input{
+.criarEstabelecimento__errorList,.criarEstabelecimento__select, .criarEstabelecimento__sucessAlert, .criarEstabelecimento__form label, .divCamposDinamicos, .criarEstabelecimento__form input{
     width: 100%;
     max-width: 600px;
 }
@@ -47,6 +47,10 @@ padding: 1.5rem;
 }
 .criarEstabelecimento__button:hover{
     background-color:var(--primary-hover);
+}
+
+.criarEstabelecimento__select{
+    
 }
 `
 

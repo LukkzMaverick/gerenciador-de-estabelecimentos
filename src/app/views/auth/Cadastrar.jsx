@@ -15,7 +15,8 @@ const Cadastrar = () => {
     const [mostrarAlertError, setMostrarAlertError] = useState(false)
     const [mensagensErro, setMensagensErro] = useState([])
     const dispatch = useDispatch() 
-    const loginState = useSelector((state) => state.auth.login)
+    const registrarState = useSelector((state) => state.auth.registrar)
+    const userState = useSelector((state) => state.auth.user)
     const [form, setForm] = useState({
         nome: '',
         email: '',
@@ -37,6 +38,19 @@ const Cadastrar = () => {
 
     }, [])
 
+    useEffect(() => {
+        if(userState.userId){
+            if(userState.role === 'superAdmin'){
+                history.push('/cadastrarAdmins')
+            }else if(userState.role ==='admin'){
+                history.push('/')
+            }else{
+                history.push('/portal/home')
+            }
+        }
+      return () => {};
+    }, [userState])
+
     function formHandler(event) {
         setForm({
             ...form,
@@ -45,9 +59,9 @@ const Cadastrar = () => {
     }
 
     useEffect(() => {
-        if(loginState.error){
+        if(registrarState.error){
             let erros = [];
-            loginState.error.map((error, index) => {
+            registrarState.error.map((error, index) => {
                 return erros.push(<li key={index} >{error.msg}</li>)
             })
             console.log(erros)
@@ -55,7 +69,7 @@ const Cadastrar = () => {
             setMostrarAlertError(true)
         }
       return () => {};
-    }, [loginState])
+    }, [registrarState])
 
     const handleCadastro = async () => {
         try {
@@ -67,8 +81,10 @@ const Cadastrar = () => {
             http.defaults.headers['x-auth-token'] = getToken();
             if(user.role === 'superAdmin'){
                 history.push('/cadastrarAdmins')
-            }else{
+            }else if(user.role ==='admin'){
                 history.push('/')
+            }else{
+                history.push('/portal/home')
             }
         } catch (error) {
             console.log(error)
@@ -79,7 +95,7 @@ const Cadastrar = () => {
         <>
             <StyledDiv className='container'>
                 <form className={'login'}>
-                    <h2 className={['login__title', "centered-title"].join(" ")}>Login</h2>
+                    <h2 className={['login__title', "centered-title"].join(" ")}>Cadastre-se</h2>
                     {mostrarAlertError ? <Alert closeText="Fechar" onClose={() => setMostrarAlertError(false)} className={`alertError`} severity="error">
                         <ul>
                             {mensagensErro}
@@ -93,8 +109,8 @@ const Cadastrar = () => {
                     <input onChange={formHandler} value={form.email} className={'login__input'} id='email' name='email' type='email'></input>
                     <label className={'login__label'} htmlFor='senha'>Senha</label>
                     <input onChange={formHandler} value={form.senha} className={'login__input'} id='senha' name='senha' type='password'></input>
-                    {loginState.loading ? <CircularProgress size={40}></CircularProgress> : ''}
-                    <button id={'botaoLogin'} type='button' onClick={() => handleCadastro()} className={'login__button'}>Entrar</button>
+                    {registrarState.loading ? <CircularProgress size={40}></CircularProgress> : ''}
+                    <button id={'botaoLogin'} type='button' onClick={() => handleCadastro()} className={'login__button'}>Enviar</button>
                 </form>
             </StyledDiv>
         </>

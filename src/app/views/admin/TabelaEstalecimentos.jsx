@@ -10,8 +10,9 @@ import { selecionarEstabelecimentoASerEditado } from '../../store/slicers/select
 import AlertDialog from '../../components/AlertDialog';
 import { fetchDeleteEstabelecimento } from '../../store/slicers/async/deleteEstabelecimento';
 import {
-    fetchEstabelecimentosByLocalizacaoAndLoggedUser
-} from '../../store/slicers/async/estabelecimentosByLocalizacaoAndLoggedUser';
+    fetchEstabelecimentosByLocalizacaoAndLoggedUser,
+    fetchEstabelecimentosByLocalizacao
+} from '../../store/slicers/async/estabelecimentosByLocalizacao';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {useAlert} from 'react-alert'
 const TabelaEstabelecimentos = (props) => {
@@ -30,7 +31,7 @@ const TabelaEstabelecimentos = (props) => {
         (async () => {
             if(props.filtroLocalizacao){
                 const response = await dispatch
-                (fetchEstabelecimentosByLocalizacaoAndLoggedUser(localizacaoIdFiltro))
+                (fetchEstabelecimentosByLocalizacao(localizacaoIdFiltro))
                 if(response.type !== 'estabelecimentosByLocalizacaoAndLoggedUser [GET]/fetchError'){
                     setEstabelecimentos(response.payload)
                 }else{
@@ -91,13 +92,19 @@ const TabelaEstabelecimentos = (props) => {
                 console.log(estabelecimento)
                 return (
                     <Fragment>
-                        <tr>
+                        <tr key={estabelecimento._id}>
                             <td className='item' onClick={() => console.log('implemente navegação')}
-                                key={estabelecimento._id} className='item'>
+                                className='item'>
                                 {estabelecimento.nome}
                             </td>
                             <td>
+                                {estabelecimento.endereco}
+                            </td>
+                            <td>
                                 {estabelecimento.localizacao.nome}
+                            </td>
+                            <td>
+                                {estabelecimento.empresa.nome}
                             </td>
                             <td className='last-column'>
                                 <Tooltip title="Editar Estabelecimento">
@@ -126,11 +133,14 @@ const TabelaEstabelecimentos = (props) => {
             <Container>
                 <h1>{'Estabelecimentos'}</h1>
 
-                <Table striped bordered hover>
+                <Table responsive striped bordered hover>
                     <thead>
                         <tr>
                             <th>Nome do Estabelecimento</th>
+                            <th>Endereço</th>
                             <th>Localização</th>
+                            <th>Empresa</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>

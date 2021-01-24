@@ -5,4 +5,4 @@ const Registrar = (data) => http.post('/auth/register', data)
 const RegistrarAdmin = (data) => http.post('/auth/registerAdmin', data) 
 
 
-export {Logar, Registrar}
+export {Logar, Registrar, RegistrarAdmin}

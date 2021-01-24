@@ -32,7 +32,7 @@ function goToCadastrarEstabelecimentos() {
 }
 
 function goToBuscaPorLocalizacao() {
-    history.push('/buscaPorLocalizacao')
+    history.push('/portal/buscaPorLocalizacao')
 }
 
 export default NavbarUser

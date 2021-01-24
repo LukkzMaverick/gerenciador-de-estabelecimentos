@@ -8,7 +8,8 @@ import {
     fetchGetOneEstabelecimentoByLoggedUser
 } from '../../store/slicers/async/getOneEstabelecimentoByLoggedUser';
 import { fetchPutEstabelecimento } from '../../store/slicers/async/putEstabelecimento';
-import { Snackbar } from '@material-ui/core';
+import { fetchEmpresaByLoggedUser } from '../../store/slicers/async/empresaByLoggedUser';
+import { InputLabel, Select, Snackbar } from '@material-ui/core';
 
 const CadastrarEstabelecimentos = (props) => {
   const [mostrarErros, setMostrarErros] = useState(false)
@@ -23,9 +24,15 @@ const CadastrarEstabelecimentos = (props) => {
   const [form, setForm] = useState({
     nome: '',
     localizacao: '',
+    empresaId: '',
+    endereco: ''
   })
   const [localizacaoId, setLocalizacaoId] = useState('')
   const [estabelecimentoId, setEstabelecimentoId] = useState('')
+  const empresaByLoggedUserState = useSelector((state)=> state.empresa.empresaByLoggedUser)
+  const [empresas,setEmpresas] = useState([])
+  const [empresa, setEmpresa] = useState('')
+  const postEstabelecimentoState = useSelector((state) => state.estabelecimentos.postEstabelecimento)
 
   useEffect(() => {
     (async ()=>{
@@ -37,11 +44,24 @@ const CadastrarEstabelecimentos = (props) => {
           console.log(response)
         console.log(response.payload._id)
         console.log(response.payload.localizacao)
+        const {_id, nome, localizacao, endereco, empresa} = response.payload
+        console.log(endereco)
+        const {nome: localizacaoNome} = localizacao
         setEstabelecimentoId(response.payload._id)
         setLocalizacaoId(response.payload.localizacao._id)
-        setForm({nome: response.payload.nome, 
-          localizacao: response.payload.localizacao.nome})
+        setEmpresa(empresa)
+        setForm({nome: nome, 
+          localizacao: localizacaoNome, endereco: endereco, empresaId: empresa})
       }
+    })()
+    return () => {};
+  }, [])
+
+  useEffect(() => {
+    (async()=>{
+      const response = await dispatch(fetchEmpresaByLoggedUser())
+      setEmpresas(response.payload)
+      console.log(empresaByLoggedUserState)
     })()
     return () => {};
   }, [])
@@ -67,15 +87,17 @@ const CadastrarEstabelecimentos = (props) => {
       ...form,
       [event.target.name]: event.target.value
     })
-    if(form.nome !== '' && form.localizacao !== '')
+    console.log(form)
+    if(form.nome !== '' && form.localizacao !== '' && form.endereco && form.empresaId)
       setBotaoHabilitado(true)
     else
       setBotaoHabilitado(false)
   }
 
   async function requestHandlerPost() {
+    console.log(form)
     const data = await dispatch(fetchPostEstabelecimento(form))
-    if(data.payload._id){
+    if(data.payload){
       setSnackbarOpen(true)
       setBotaoHabilitado(false)
       setTimeout(() => {
@@ -91,7 +113,9 @@ const CadastrarEstabelecimentos = (props) => {
       {nome: form.nome, 
         nomeLocalizacao: form.localizacao, 
         localizacaoId,
-        estabelecimentoId
+        estabelecimentoId, 
+      endereco: form.endereco,
+      empresaId: form.empresaId
       }))
     if(data.payload){
       setSnackbarOpen(true)
@@ -113,6 +137,27 @@ const CadastrarEstabelecimentos = (props) => {
     setMensagensErro(erroList)
   }
 
+  useEffect(() => {
+    if(postEstabelecimentoState.error){
+      let erroList = []
+    postEstabelecimentoState.error.map((erro) => {
+      return erroList.push(<li>{erro}</li>)
+    })
+
+    setMostrarErros(true)
+    setMensagensErro(erroList)
+    }
+    return () => {};
+  }, [postEstabelecimentoState])
+
+  function handleSelectChange(event) {
+    setEmpresa(event.target.value)
+    setForm({
+      ...form,
+      [event.target.name]: event.target.value
+    })
+}
+
   return (
     <Container className={'criarEstabelecimento'}>
       <h1 className={'criarEstabelecimento__title centered-title'}>
@@ -130,13 +175,40 @@ const CadastrarEstabelecimentos = (props) => {
         </ul>
         <label htmlFor="nome">Nome do Estabelecimento</label>
         <input onChange={formHandler} type="text" name="nome" id="nome" value={form.nome} required />
-        <label htmlFor="localizacao">Localização</label>
+        <label htmlFor="endereco">Endereço</label>
+        <input onChange={formHandler} value={form.endereco} type="text" name='endereco'
+          id="endereco" required />
+        <label htmlFor="localizacao">Cidade</label>
         <input onChange={formHandler} value={form.localizacao} type="text" name='localizacao'
           id="localizacao" required />
+
+ <InputLabel htmlFor="empresa">Empresa</InputLabel>
+                <Select className='criarEstabelecimento__select' fullWidth={true}
+                    native
+                    value={empresa}
+                    onChange={(event) => handleSelectChange(event)}
+                    inputProps={{
+                        name: 'empresaId',
+                        id: 'empresa',
+                    }}
+                >
+                    <option aria-label="None" value="" />
+                    {empresas.map((empresa) => {
+                        if (empresas && empresas.length > 0) {
+                            return (
+                                <Fragment>
+                                    <option value={empresa._id}>{empresa.nome}</option>
+                                </Fragment>
+                            )
+                        }
+                    })}
+                </Select> 
+
         <button id='botaoCadastrar' disabled={!botaoHabilitado} onClick={novoCadastro ? () => requestHandlerPost() : 
         () => requestHandlerPut()} className={'criarEstabelecimento__button'} type="button">
           {novoCadastro ? 'Cadastrar' : 'Editar'}
         </button>
+        
       </form>
       <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={()=>setSnackbarOpen(false)}>
   <Alert onClose={()=>setSnackbarOpen(false)} severity="success">

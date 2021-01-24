@@ -15,6 +15,7 @@ const Login = () => {
     const [mensagensErro, setMensagensErro] = useState([])
     const dispatch = useDispatch() 
     const loginState = useSelector((state) => state.auth.login)
+    const userState = useSelector((state) => state.auth.user)
     const [form, setForm] = useState({
         email: '',
         senha: '',
@@ -55,6 +56,19 @@ const Login = () => {
       return () => {};
     }, [loginState])
 
+    useEffect(() => {
+        if(userState.userId){
+            if(userState.role === 'superAdmin'){
+                history.push('/cadastrarAdmins')
+            }else if(userState.role ==='admin'){
+                history.push('/')
+            }else{
+                history.push('/portal/home')
+            }
+        }
+      return () => {};
+    }, [userState])
+
     const handleLogin = async () => {
         try {
             const response = await dispatch(fetchLogar(form))
@@ -65,8 +79,10 @@ const Login = () => {
             http.defaults.headers['x-auth-token'] = getToken();
             if(user.role === 'superAdmin'){
                 history.push('/cadastrarAdmins')
-            }else{
+            }else if(user.role ==='admin'){
                 history.push('/')
+            }else{
+                history.push('/portal/home')
             }
         } catch (error) {
             console.log(error)

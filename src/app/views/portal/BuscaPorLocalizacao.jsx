@@ -3,10 +3,10 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { Container as BootstrapContainer } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
-import { fetchLocalizacoesByLoggedUser } from '../../store/slicers/async/localizacoesByLoggedUser';
 import { selecionarLocalizacao } from '../../store/slicers/selectFiltroLocalizacao'
 import history from '../../config/history';
 import { useAlert } from 'react-alert'
+import { fetchLocalizacoes } from '../../store/slicers/async/localizacoes';
 
 const BuscaPorLocalizacao = () => {
     const [localizacao, setLocalizacao] = useState('')
@@ -14,29 +14,25 @@ const BuscaPorLocalizacao = () => {
     const [localizacoes, setLocalizacoes] = useState([])
     const alert = useAlert()
     function handleSelectChange(event) {
-        console.log(event.target)
         setLocalizacao(event.target.value)
         dispatch(selecionarLocalizacao(event.target.value))
-        history.push('/filtroLocalizacao')
+        history.push('/portal/filtroLocalizacao')
     }
+    const [mappable, setMappable] = useState(false)
 
     useEffect(() => {
         (async () => {
-            const response = await dispatch(fetchLocalizacoesByLoggedUser())
-            if(response.payload.localizacoes.length > 0){
-                setLocalizacoes(response.payload.localizacoes)
+            const response = await dispatch(fetchLocalizacoes())
+            if(response.payload.length > 0){
+                console.log('???')
+                setLocalizacoes(response.payload)
+                console.log(localizacoes)
+                setMappable(true)
             }else{
                 alert.show(<div style={{ fontSize: '1.8rem' }}>Não existem estabelecimentos cadastrados!</div>, {
                     title: "Erro!",
-            
-                    onClose: () => history.push('/cadastrarEstabelecimentos'),
-                    timeout: '3000'
-            
                   });
             
-                  setTimeout(() => {
-                    history.push('/cadastrarEstabelecimentos')
-                  }, 3000);
                 } 
             
         })()
@@ -58,15 +54,16 @@ const BuscaPorLocalizacao = () => {
                     }}
                 >
                     <option aria-label="None" value="" />
-                    {localizacoes.map((localizacao) => {
-                        if (localizacoes && localizacoes.length > 0) {
+                    {mappable ? localizacoes.map((loc) => {
+                        console.log(localizacoes)
                             return (
                                 <Fragment>
-                                    <option value={localizacao._id}>{localizacao.nome}</option>
+                                    <option value={loc._id}>{loc.nome}</option>
                                 </Fragment>
                             )
-                        }
-                    })}
+                        
+                    }):''}
+
                 </Select>
             </Container>
         </>

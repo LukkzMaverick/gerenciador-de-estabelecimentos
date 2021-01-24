@@ -55,7 +55,7 @@ function goToLoginPage() {
 }
 
 function goToRegisterPage() {
-    history.push('/register')
+    history.push('/cadastrar')
 }
 
 export default Navbar

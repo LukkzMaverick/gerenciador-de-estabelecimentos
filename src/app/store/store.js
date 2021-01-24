@@ -4,13 +4,21 @@ import selectEstabelecimentoASerEditado from './slicers/selectEstabelecimentoASe
 import putEstabelecimento from './slicers/async/putEstabelecimento';
 import selectFiltroLocalizacao from './slicers/selectFiltroLocalizacao';
 import user from './slicers/user';
+import registrar from './slicers/async/registrar';
+import registrarAdmin from './slicers/async/registrarAdmin';
+import cadastrarEmpresa from './slicers/async/cadastrarEmpresa';
+import empresaByLoggedUser from './slicers/async/empresaByLoggedUser';
+import postEstabelecimento from './slicers/async/postEstabelecimento';
+import selectEmpresa from './slicers/selectEmpresa';
 
-const authReducer = combineReducers({login: logar, user: user})
+const authReducer = combineReducers({login: logar, user: user, registrar, registrarAdmin})
 const estabelecimentosReducer = combineReducers({selectEstabelecimentoASerEditado, 
-  putEstabelecimento, selectFiltroLocalizacao})
+  putEstabelecimento, selectFiltroLocalizacao, postEstabelecimento})
+  const empresa = combineReducers({cadastrarEmpresa, empresaByLoggedUser, selectEmpresa})
 export default configureStore({
   reducer: {
     auth: authReducer,
-    estabelecimentos: estabelecimentosReducer
+    estabelecimentos: estabelecimentosReducer,
+    empresa: empresa
   },
 });
