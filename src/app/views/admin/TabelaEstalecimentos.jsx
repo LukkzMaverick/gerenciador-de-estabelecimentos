@@ -15,6 +15,9 @@ import {
 } from '../../store/slicers/async/estabelecimentosByLocalizacao';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {useAlert} from 'react-alert'
+import {
+    fetchEstabelecimentosByLocalizacaoAndEmpresa
+} from '../../store/slicers/async/estabelecimentosByLocalizacaoAndEmpresa';
 const TabelaEstabelecimentos = (props) => {
 
     const dispatch = useDispatch()
@@ -26,16 +29,25 @@ const TabelaEstabelecimentos = (props) => {
     const localizacaoIdFiltro = useSelector((state) => 
   state.estabelecimentos.selectFiltroLocalizacao)
   const alert = useAlert()
+  const selectEmpresaState = useSelector((state) => state.empresa.selectEmpresa)
 
     useEffect(() => {
         (async () => {
             if(props.filtroLocalizacao){
-                const response = await dispatch
+                if(props.filtroEmpresa){
+                    const response = await dispatch(fetchEstabelecimentosByLocalizacaoAndEmpresa
+                        ({localizacaoId: localizacaoIdFiltro, empresaId: selectEmpresaState.empresaId}))
+                    if(response.payload.length > 0){
+                        setEstabelecimentos(response.payload)
+                    }
+                }else{
+                    const response = await dispatch
                 (fetchEstabelecimentosByLocalizacao(localizacaoIdFiltro))
                 if(response.type !== 'estabelecimentosByLocalizacaoAndLoggedUser [GET]/fetchError'){
                     setEstabelecimentos(response.payload)
                 }else{
                     //history.push('/')
+                }
                 }
             }else{
                 const response = await dispatch(fetchEstabelecimentosByLoggedUser())
@@ -81,19 +93,16 @@ const TabelaEstabelecimentos = (props) => {
         if(response.payload){
             setResponseDelete(response.payload)
         }
-        console.log(response)
     }
 
     function mountEstabelecimentos() {
 
         if (estabelecimentos && estabelecimentos.length > 0) {
-            console.log(estabelecimentos)
             return estabelecimentos.map((estabelecimento) => {
-                console.log(estabelecimento)
                 return (
                     <Fragment>
                         <tr key={estabelecimento._id}>
-                            <td className='item' onClick={() => console.log('implemente navegação')}
+                            <td className='item'
                                 className='item'>
                                 {estabelecimento.nome}
                             </td>
@@ -106,6 +115,7 @@ const TabelaEstabelecimentos = (props) => {
                             <td>
                                 {estabelecimento.empresa.nome}
                             </td>
+                            {props.filtroLocalizacao ? '' :
                             <td className='last-column'>
                                 <Tooltip title="Editar Estabelecimento">
                                     <Button className={'editIconButton'} onClick={() =>
@@ -120,7 +130,7 @@ const TabelaEstabelecimentos = (props) => {
                                         <DeleteIcon className='editIcon'></DeleteIcon>
                                     </Button>
                                 </Tooltip>
-                            </td>
+                            </td>}
                         </tr>
                     </Fragment>
                 )
@@ -131,7 +141,7 @@ const TabelaEstabelecimentos = (props) => {
     return (
         <>
             <Container>
-                <h1>{'Estabelecimentos'}</h1>
+                <h1>{props.filtroLocalizacao && estabelecimentos.length > 0? `Estabelecimentos - ${estabelecimentos[0].localizacao.nome}` : `Estabelecimentos`}</h1>
 
                 <Table responsive striped bordered hover>
                     <thead>
@@ -140,7 +150,7 @@ const TabelaEstabelecimentos = (props) => {
                             <th>Endereço</th>
                             <th>Localização</th>
                             <th>Empresa</th>
-                            <th>Ações</th>
+                            {props.localizacao ? <th>Ações</th> : ''}
                         </tr>
                     </thead>
                     <tbody>

@@ -18,18 +18,17 @@ const BuscaPorLocalizacao = () => {
         dispatch(selecionarLocalizacao(event.target.value))
         history.push('/portal/filtroLocalizacao')
     }
+    
     const [mappable, setMappable] = useState(false)
 
     useEffect(() => {
         (async () => {
             const response = await dispatch(fetchLocalizacoes())
             if(response.payload.length > 0){
-                console.log('???')
                 setLocalizacoes(response.payload)
-                console.log(localizacoes)
                 setMappable(true)
             }else{
-                alert.show(<div style={{ fontSize: '1.8rem' }}>Não existem estabelecimentos cadastrados!</div>, {
+                alert.show(<div style={{ fontSize: '1.8rem' }}>Não existem Localizações com estabelecimentos vinculados cadastrados!</div>, {
                     title: "Erro!",
                   });
             
@@ -55,7 +54,6 @@ const BuscaPorLocalizacao = () => {
                 >
                     <option aria-label="None" value="" />
                     {mappable ? localizacoes.map((loc) => {
-                        console.log(localizacoes)
                             return (
                                 <Fragment>
                                     <option value={loc._id}>{loc.nome}</option>

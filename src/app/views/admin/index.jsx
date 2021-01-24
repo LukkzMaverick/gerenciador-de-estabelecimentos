@@ -18,11 +18,8 @@ const Admin = (props) => {
   const userState = useSelector((state) => state.auth.user)
 
   const AdminRoute = ({ ...rest }) => {
-    console.log('ademiro')
     const user = getUser()
-    console.log(user)
       if(user.role !== 'admin'  && user.role !== 'superAdmin'){
-        console.log(user.role)
         return <Redirect push to="/portal/home" />
       }
     

@@ -48,7 +48,6 @@ const CadastrarAdmins = () => {
             registrarAdminState.error.map((error, index) => {
                 return erros.push(<li key={index} >{error.msg}</li>)
             })
-            console.log(erros)
             setMensagensErro(erros)
             setMostrarAlertError(true)
             setAlertSeverity('error')
@@ -73,7 +72,6 @@ const CadastrarAdmins = () => {
             }
             //const user = response.payload.user
         } catch (error) {
-            console.log(error)
         }
     }
 

@@ -17,8 +17,8 @@ const EstabelecimentosByLocalizacao =
 
 const LocalizacoesByEmpresa = (empresaId) => http.get(`/localizacao/${empresaId}`)
 
-const EstabelecimentosByLocalizacaoAndEmpresa = (payload) => http.get(`/estabelecimento/byLocalizacaoAndEmpresa/${payload.localizacaoId}/${payload.empresaId}}`)
-//http://localhost:{{PORT}}/estabelecimento/byLocalizacao/:localizacaoId
+const EstabelecimentosByLocalizacaoAndEmpresa = (payload) => http.get(`/estabelecimento/byLocalizacaoAndEmpresa/${payload.localizacaoId}/${payload.empresaId}`)
+
 export {
     EstabelecimentosByLoggedUser, 
     PostEstabelecimento, 

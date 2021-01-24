@@ -10,6 +10,7 @@ import {
 import { fetchPutEstabelecimento } from '../../store/slicers/async/putEstabelecimento';
 import { fetchEmpresaByLoggedUser } from '../../store/slicers/async/empresaByLoggedUser';
 import { InputLabel, Select, Snackbar } from '@material-ui/core';
+import {useAlert} from 'react-alert'
 
 const CadastrarEstabelecimentos = (props) => {
   const [mostrarErros, setMostrarErros] = useState(false)
@@ -21,6 +22,7 @@ const CadastrarEstabelecimentos = (props) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const estabelecimentoASerEditado = useSelector((state) => 
   state.estabelecimentos.selectEstabelecimentoASerEditado)
+  const alert = useAlert()
   const [form, setForm] = useState({
     nome: '',
     localizacao: '',
@@ -38,14 +40,9 @@ const CadastrarEstabelecimentos = (props) => {
     (async ()=>{
 
       if(!novoCadastro){
-        console.log(estabelecimentoASerEditado)
         const response = await dispatch(
           fetchGetOneEstabelecimentoByLoggedUser(estabelecimentoASerEditado))
-          console.log(response)
-        console.log(response.payload._id)
-        console.log(response.payload.localizacao)
         const {_id, nome, localizacao, endereco, empresa} = response.payload
-        console.log(endereco)
         const {nome: localizacaoNome} = localizacao
         setEstabelecimentoId(response.payload._id)
         setLocalizacaoId(response.payload.localizacao._id)
@@ -60,8 +57,21 @@ const CadastrarEstabelecimentos = (props) => {
   useEffect(() => {
     (async()=>{
       const response = await dispatch(fetchEmpresaByLoggedUser())
-      setEmpresas(response.payload)
-      console.log(empresaByLoggedUserState)
+      if(response.payload.length > 0){
+        setEmpresas(response.payload)
+      }else{
+        alert.show(<div style={{ fontSize: '1.8rem' }}>Não existem empresas cadastradas!</div>, {
+          title: "Erro!",
+  
+          onClose: () => history.push('/cadastrarEmpresas'),
+          timeout: '4000'
+  
+        });
+  
+        setTimeout(() => {
+          history.push('/cadastrarEmpresas')
+        }, 4000);
+      }
     })()
     return () => {};
   }, [])
@@ -87,7 +97,6 @@ const CadastrarEstabelecimentos = (props) => {
       ...form,
       [event.target.name]: event.target.value
     })
-    console.log(form)
     if(form.nome !== '' && form.localizacao !== '' && form.endereco && form.empresaId)
       setBotaoHabilitado(true)
     else
@@ -95,7 +104,6 @@ const CadastrarEstabelecimentos = (props) => {
   }
 
   async function requestHandlerPost() {
-    console.log(form)
     const data = await dispatch(fetchPostEstabelecimento(form))
     if(data.payload){
       setSnackbarOpen(true)
@@ -104,7 +112,6 @@ const CadastrarEstabelecimentos = (props) => {
         history.push('/')
       }, 3000);
     }
-    console.log(data)
   }
 
   async function requestHandlerPut() {

@@ -14,7 +14,6 @@ const EstabelecimentosPorEmpresa = () => {
     useEffect(() => {
         (async()=>{
             const response = await dispatch(fetchEstabelecimentosByEmpresa(selectEmpresaState.empresaId))
-            console.log(response.payload)
             if(response.payload){
                 setEstabelecimentos(response.payload)
             }
@@ -25,13 +24,11 @@ const EstabelecimentosPorEmpresa = () => {
     function mountEstabelecimentos() {
 
         if (estabelecimentos && estabelecimentos.length > 0) {
-            console.log(estabelecimentos)
             return estabelecimentos.map((estabelecimento) => {
-                console.log(estabelecimento)
                 return (
                     <Fragment>
                         <tr key={estabelecimento._id}>
-                            <td className='item' onClick={() => console.log('implemente navegação')}
+                            <td className='item' 
                                 className='item'>
                                 {estabelecimento.nome}
                             </td>

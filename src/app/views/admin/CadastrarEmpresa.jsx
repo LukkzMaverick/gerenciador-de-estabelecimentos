@@ -46,7 +46,6 @@ const CadastrarEmpresa = () => {
             cadastrarEmpresaState.error.map((error, index) => {
                 return erros.push(<li key={index} >{error.msg}</li>)
             })
-            console.log(erros)
             setMensagensErro(erros)
             setMostrarAlertError(true)
             setAlertSeverity('error')
@@ -68,7 +67,6 @@ const CadastrarEmpresa = () => {
             }
             //const user = response.payload.user
         } catch (error) {
-            console.log(error)
         }
     }
 

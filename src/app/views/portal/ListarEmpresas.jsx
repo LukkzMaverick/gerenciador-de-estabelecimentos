@@ -14,8 +14,7 @@ const ListarEmpresas = () => {
     useEffect(() => {
         (async () => {
             const response = await dispatch(fetchGetAllEmpresas())
-            if (response.payload._id) {
-                console.log(response.payload)
+            if (response.payload[0]._id) {
                 setEmpresas(response.payload)
                 
             }else{
@@ -36,9 +35,7 @@ const ListarEmpresas = () => {
 
 
         if (empresas && empresas.length > 0) {
-            console.log(empresas)
             return empresas.map((empresa) => {
-                console.log(empresa)
                 return (
                     <Fragment>
                         <tr key={empresa._id}>
