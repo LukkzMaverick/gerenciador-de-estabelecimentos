@@ -64,7 +64,6 @@ const Cadastrar = () => {
             registrarState.error.map((error, index) => {
                 return erros.push(<li key={index} >{error.msg}</li>)
             })
-            console.log(erros)
             setMensagensErro(erros)
             setMostrarAlertError(true)
         }
@@ -74,7 +73,6 @@ const Cadastrar = () => {
     const handleCadastro = async () => {
         try {
             const response = await dispatch(fetchRegistrar(form))
-            console.log(response)
             const user = response.payload.user
             saveLocalStorage({token: response.payload.token, user})
             dispatch(loginStore(user))
@@ -87,7 +85,6 @@ const Cadastrar = () => {
                 history.push('/portal/home')
             }
         } catch (error) {
-            console.log(error)
         }
     }
 

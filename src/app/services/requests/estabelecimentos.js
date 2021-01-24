@@ -5,7 +5,7 @@ const GetOneEstabelecimentoByLoggedUser = (estabelecimentoId) => {
     return http.get(`/estabelecimento/getOne/${estabelecimentoId}`)
 }
 const EstabelecimentosByEmpresa = (empresaId) => http.get(`/estabelecimento/${empresaId}`)
-const PostEstabelecimento = (data) => http.post(`/estabelecimento/${data.empresaId}`, data)
+const PostEstabelecimento = (data) => http.post(`/estabelecimento`, data)
 const PutEstabelecimento = 
 (data) => http.put(`/estabelecimento/update/${data.estabelecimentoId}/${data.empresaId}`, 
 {nome: data.nome, localizacaoId: data.localizacaoId, nomeLocalizacao: data.nomeLocalizacao, endereco: data.endereco})

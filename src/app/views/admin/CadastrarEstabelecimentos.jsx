@@ -16,7 +16,7 @@ const CadastrarEstabelecimentos = (props) => {
   const [mostrarErros, setMostrarErros] = useState(false)
   const [mostrarAlertSucess, setMostrarAlertSucess] = useState(false)
   const [mensagensErro, setMensagensErro] = useState([])
-  const [botaoHabilitado, setBotaoHabilitado] = useState(false)
+  const [botaoHabilitado, setBotaoHabilitado] = useState(true)
   const novoCadastro = props.novoCadastro
   const dispatch = useDispatch()
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -35,6 +35,7 @@ const CadastrarEstabelecimentos = (props) => {
   const [empresas,setEmpresas] = useState([])
   const [empresa, setEmpresa] = useState('')
   const postEstabelecimentoState = useSelector((state) => state.estabelecimentos.postEstabelecimento)
+  const putEstabelecimentoState = useSelector((state) => state.estabelecimentos.putEstabelecimento)
 
   useEffect(() => {
     (async ()=>{
@@ -51,6 +52,13 @@ const CadastrarEstabelecimentos = (props) => {
           localizacao: localizacaoNome, endereco: endereco, empresaId: empresa})
       }
     })()
+    return () => {};
+  }, [])
+
+  useEffect(() => {
+    if(!novoCadastro){
+      setBotaoHabilitado(true)
+    }
     return () => {};
   }, [])
 
@@ -97,25 +105,23 @@ const CadastrarEstabelecimentos = (props) => {
       ...form,
       [event.target.name]: event.target.value
     })
-    if(form.nome !== '' && form.localizacao !== '' && form.endereco && form.empresaId)
-      setBotaoHabilitado(true)
-    else
-      setBotaoHabilitado(false)
   }
 
   async function requestHandlerPost() {
+    setBotaoHabilitado(false)
     const data = await dispatch(fetchPostEstabelecimento(form))
-    if(data.payload){
+    if(data.payload._id){
       setSnackbarOpen(true)
-      setBotaoHabilitado(false)
       setTimeout(() => {
         history.push('/')
       }, 3000);
+    }else{
+      setBotaoHabilitado(true)
     }
   }
 
   async function requestHandlerPut() {
-    //{nome: data.nome, localizacaoId: data.localizacaoId, nomeLocalizacao: data.nomeLocalizacao}
+    setBotaoHabilitado(false)
     const data = await dispatch(fetchPutEstabelecimento(
       {nome: form.nome, 
         nomeLocalizacao: form.localizacao, 
@@ -124,12 +130,14 @@ const CadastrarEstabelecimentos = (props) => {
       endereco: form.endereco,
       empresaId: form.empresaId
       }))
-    if(data.payload){
+    if(data.payload._id){
       setSnackbarOpen(true)
       setBotaoHabilitado(false)
       setTimeout(() => {
         history.push('/')
       }, 3000);
+    }else{
+      setBotaoHabilitado(true)
     }
   }
 
@@ -145,17 +153,34 @@ const CadastrarEstabelecimentos = (props) => {
   }
 
   useEffect(() => {
-    if(postEstabelecimentoState.error){
-      let erroList = []
-    postEstabelecimentoState.error.map((erro) => {
-      return erroList.push(<li>{erro}</li>)
-    })
-
-    setMostrarErros(true)
-    setMensagensErro(erroList)
+    if(novoCadastro){
+      if(postEstabelecimentoState.error){
+        let erroList = []
+      postEstabelecimentoState.error.map((erro) => {
+        return erroList.push(<li>{erro.msg}</li>)
+      })
+  
+      setMostrarErros(true)
+      setMensagensErro(erroList)
+      }
     }
     return () => {};
   }, [postEstabelecimentoState])
+
+  useEffect(() => {
+    if(!novoCadastro){
+      if(putEstabelecimentoState.error){
+        let erroList = []
+      putEstabelecimentoState.error.map((erro) => {
+        return erroList.push(<li>{erro.msg}</li>)
+      })
+  
+      setMostrarErros(true)
+      setMensagensErro(erroList)
+      }
+    }
+    return () => {};
+  }, [putEstabelecimentoState])
 
   function handleSelectChange(event) {
     setEmpresa(event.target.value)

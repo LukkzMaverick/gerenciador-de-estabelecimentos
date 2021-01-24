@@ -49,7 +49,6 @@ const Login = () => {
             loginState.error.map((error, index) => {
                 return erros.push(<li key={index} >{error.msg}</li>)
             })
-            console.log(erros)
             setMensagensErro(erros)
             setMostrarAlertError(true)
         }
@@ -72,7 +71,6 @@ const Login = () => {
     const handleLogin = async () => {
         try {
             const response = await dispatch(fetchLogar(form))
-            console.log(response)
             const user = response.payload.user
             saveLocalStorage({token: response.payload.token, user})
             dispatch(loginStore(user))
@@ -85,7 +83,6 @@ const Login = () => {
                 history.push('/portal/home')
             }
         } catch (error) {
-            console.log(error)
         }
     }
 
